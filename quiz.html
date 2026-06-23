@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alpine — How much is your hearing at risk?</title>
+<style>
+  :root {
+    --red: #ED212D;          /* Alpine red */
+    --peach: #FDE3D6;        /* Alpine soft peach */
+    --pink: #F8F0EC;         /* Alpine light pink */
+    --black: #200E0E;        /* Alpine warm black */
+    --white: #FFFFFF;
+    --text: #200E0E;
+    --text-soft: #6a5a5a;
+    --text-faint: #a89898;
+    --border: #ecddd6;
+    --bg: #F8F0EC;
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .wrap { width: 100%; max-width: 460px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 4px 24px rgba(32,14,14,0.06);
+  }
+  .badge {
+    display: inline-block;
+    background: var(--peach);
+    color: var(--red);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+  h1 { font-size: 22px; font-weight: 600; margin-bottom: 8px; color: var(--red); }
+  p.lead { font-size: 15px; color: var(--text-soft); margin-bottom: 18px; }
+  button {
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    width: 100%;
+    transition: transform .08s, background .15s, border-color .15s;
+  }
+  button:active { transform: scale(0.985); }
+  .btn-primary { background: var(--red); color: #fff; }
+  .btn-primary:hover { background: #c41824; }
+  .btn-ghost { background: transparent; color: var(--text-soft); font-size: 13px; padding: 10px; }
+  .btn-ghost:hover { color: var(--text); }
+  .row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .step-label { font-size: 13px; color: var(--text-soft); }
+  .track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 22px; }
+  .fill { height: 100%; background: var(--red); border-radius: 3px; transition: width .3s; }
+  .question { font-size: 18px; font-weight: 600; margin-bottom: 18px; color: var(--black); line-height: 1.4; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    text-align: left;
+    font-weight: 500;
+    font-size: 15px;
+    padding: 14px 16px;
+  }
+  .opt:hover { border-color: var(--red); background: var(--pink); }
+  .back { margin-top: 14px; }
+  .res-icon {
+    width: 68px; height: 68px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px; font-size: 34px;
+  }
+  .res-title { font-size: 20px; font-weight: 600; text-align: center; margin-bottom: 6px; }
+  .res-body { font-size: 14px; color: var(--text-soft); text-align: center; margin-bottom: 18px; }
+  .rec {
+    background: var(--pink);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+  }
+  .rec .k { font-size: 12px; color: var(--text-soft); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+  .rec .prod { font-size: 18px; font-weight: 600; color: var(--red); margin-bottom: 4px; }
+  .rec .why { font-size: 13px; color: var(--text-soft); }
+  .disclaimer { font-size: 11px; color: var(--text-faint); text-align: center; margin-top: 18px; line-height: 1.5; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+
+    <!-- INTRO -->
+    <div id="intro">
+      <span class="badge">Hearing risk check · prototype</span>
+      <h1>How much is your hearing at risk?</h1>
+      <p class="lead">Six quick questions about your habits and symptoms. No sound needed — just answer honestly and we'll show you where you stand and how to protect your hearing.</p>
+      <button class="btn-primary" id="startBtn">Start the check</button>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="quiz" class="hidden">
+      <div class="row">
+        <span class="step-label">Question <span id="qNum">1</span> of <span id="qTotal">6</span></span>
+      </div>
+      <div class="track"><div class="fill" id="fill" style="width:16%"></div></div>
+      <p class="question" id="questionText">—</p>
+      <div class="options" id="options"></div>
+      <button class="btn-ghost back hidden" id="backBtn">← Previous question</button>
+    </div>
+
+    <!-- RESULT -->
+    <div id="result" class="hidden">
+      <div class="res-icon" id="resIcon">✓</div>
+      <p class="res-title" id="resTitle">—</p>
+      <p class="res-body" id="resBody"></p>
+      <div class="rec">
+        <div class="k">Recommended for you</div>
+        <div class="prod" id="recProd">—</div>
+        <div class="why" id="recWhy">—</div>
+      </div>
+      <button class="btn-primary" id="ctaBtn">See this protection on alpine.nl</button>
+      <button class="btn-ghost" id="restartBtn">↻ Start over</button>
+      <p class="disclaimer">This is an awareness tool, not a medical test. If you're concerned about your hearing, see an audiologist for a professional assessment.</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  // Each option carries a risk score. Higher = more risk.
+  // The "use" question doesn't score risk; it sets the recommended product.
+  var questions = [
+    {
+      q: "How often are you in loud environments? (concerts, festivals, clubs, loud work, motorsport)",
+      opts: [
+        { t: "Rarely or never", s: 0 },
+        { t: "A few times a year", s: 1 },
+        { t: "Most weeks", s: 2 },
+        { t: "Almost daily", s: 3 }
+      ]
+    },
+    {
+      q: "Do you ever experience ringing or buzzing in your ears (tinnitus)?",
+      opts: [
+        { t: "Never", s: 0 },
+        { t: "Occasionally, after loud events", s: 1 },
+        { t: "Regularly", s: 2 },
+        { t: "Almost constantly", s: 3 }
+      ]
+    },
+    {
+      q: "Do you find yourself asking people to repeat themselves?",
+      opts: [
+        { t: "Rarely", s: 0 },
+        { t: "Sometimes, in noisy places", s: 1 },
+        { t: "Often", s: 2 },
+        { t: "Very often, even in quiet rooms", s: 3 }
+      ]
+    },
+    {
+      q: "Do you currently use any hearing protection in loud places?",
+      opts: [
+        { t: "Yes, always", s: 0 },
+        { t: "Sometimes", s: 1 },
+        { t: "Rarely", s: 2 },
+        { t: "Never", s: 3 }
+      ]
+    },
+    {
+      q: "What's your age range?",
+      opts: [
+        { t: "Under 25", s: 0 },
+        { t: "25–40", s: 1 },
+        { t: "40–55", s: 2 },
+        { t: "55+", s: 3 }
+      ]
+    },
+    {
+      q: "What do you most want protection for?",
+      use: true,
+      opts: [
+        { t: "Festivals & concerts", s: 0, use: "festival" },
+        { t: "Playing or performing music", s: 0, use: "musician" },
+        { t: "Everyday loud environments", s: 0, use: "general" },
+        { t: "Sleep & recovery", s: 0, use: "sleep" }
+      ]
+    }
+  ];
+
+  var products = {
+    festival: { name: "PartyPlug Pro", why: "Even hi-fi filter (21 dB), comfortable all night, discreet — ideal for festivals and concerts." },
+    musician: { name: "MusicSafe Pro", why: "Three interchangeable hi-fi filters (16/19/22 dB) so you can adapt protection to any stage or venue." },
+    general: { name: "MusicSafe Pro", why: "The most adaptable option — swap filters to match whatever loud environment you're in, with clear sound." },
+    sleep: { name: "SleepDeep", why: "Soft sleep earplugs (27 dB) for rest and recovery — pair with music protection for loud days." }
+  };
+
+  var idx = 0, scores = [], useCase = "general";
+  var intro = document.getElementById('intro');
+  var quiz = document.getElementById('quiz');
+  var result = document.getElementById('result');
+
+  function render(){
+    var q = questions[idx];
+    document.getElementById('qNum').textContent = idx+1;
+    document.getElementById('qTotal').textContent = questions.length;
+    document.getElementById('fill').style.width = ((idx+1)/questions.length*100)+'%';
+    document.getElementById('questionText').textContent = q.q;
+    var box = document.getElementById('options');
+    box.innerHTML = '';
+    q.opts.forEach(function(o, i){
+      var b = document.createElement('button');
+      b.className = 'opt';
+      b.textContent = o.t;
+      b.addEventListener('click', function(){ choose(i); });
+      box.appendChild(b);
+    });
+    document.getElementById('backBtn').classList.toggle('hidden', idx === 0);
+  }
+
+  function choose(i){
+    var q = questions[idx];
+    scores[idx] = q.opts[i].s;
+    if(q.use){ useCase = q.opts[i].use; }
+    idx++;
+    if(idx >= questions.length){ finish(); } else { render(); }
+  }
+
+  document.getElementById('backBtn').addEventListener('click', function(){
+    if(idx > 0){ idx--; render(); }
+  });
+
+  function finish(){
+    quiz.classList.add('hidden');
+    result.classList.remove('hidden');
+    var total = scores.reduce(function(a,b){ return a+b; }, 0); // max 15 (5 scored questions x3)
+    var icon = document.getElementById('resIcon');
+    var title = document.getElementById('resTitle');
+    var body = document.getElementById('resBody');
+
+    // Tier thresholds across 5 scored questions (0-15)
+    if(total <= 4){
+      icon.style.background = 'var(--peach)'; icon.style.color = 'var(--text)'; icon.textContent = '✓';
+      title.textContent = 'Low risk — keep it that way';
+      body.textContent = "Your habits suggest a low risk to your hearing right now. The damage that causes hearing loss builds up over time and can't be undone, so protecting your ears in loud places keeps you in this spot.";
+    } else if(total <= 9){
+      icon.style.background = 'var(--peach)'; icon.style.color = 'var(--red)'; icon.textContent = '!';
+      title.textContent = 'Moderate risk — worth protecting';
+      body.textContent = "Some of your answers point to a real risk to your hearing. The good news: it's preventable. Using hi-fi protection that keeps sound clear — so you'll actually wear it — is the single most effective step.";
+    } else {
+      icon.style.background = 'var(--red)'; icon.style.color = '#fff'; icon.textContent = '!';
+      title.textContent = 'Higher risk — act now';
+      body.textContent = "Your answers suggest your hearing is under real strain. Consider a professional hearing test with an audiologist — and protecting your ears from here on matters more than ever, because there's less to spare.";
+    }
+
+    var p = products[useCase] || products.general;
+    document.getElementById('recProd').textContent = p.name;
+    document.getElementById('recWhy').textContent = p.why;
+  }
+
+  document.getElementById('startBtn').addEventListener('click', function(){
+    intro.classList.add('hidden');
+    quiz.classList.remove('hidden');
+    idx = 0; scores = []; useCase = "general";
+    render();
+  });
+  document.getElementById('restartBtn').addEventListener('click', function(){
+    result.classList.add('hidden');
+    intro.classList.remove('hidden');
+  });
+  document.getElementById('ctaBtn').addEventListener('click', function(){
+    window.open('https://www.alpine.nl', '_blank');
+  });
+})();
+</script>
+</body>
+</html>

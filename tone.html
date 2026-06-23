@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alpine — Can you still hear the high notes?</title>
+<style>
+  :root {
+    --blue: #ED212D;          /* Alpine red — primary accent */
+    --blue-light: #FDE3D6;    /* Alpine soft peach — subtle backgrounds */
+    --green: #200E0E;         /* Alpine warm black (healthy result) */
+    --green-light: #FDE3D6;   /* Alpine soft peach */
+    --amber: #ED212D;         /* Alpine red (watch result) */
+    --amber-light: #FDE3D6;   /* Alpine soft peach */
+    --red: #ED212D;           /* Alpine red */
+    --red-light: #FDE3D6;     /* Alpine soft peach */
+    --text: #200E0E;          /* Alpine warm black */
+    --text-soft: #6a5a5a;
+    --text-faint: #a89898;
+    --border: #ecddd6;
+    --bg: #F8F0EC;            /* Alpine light pink */
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .wrap { width: 100%; max-width: 460px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 4px 24px rgba(26,58,92,0.06);
+  }
+  .badge {
+    display: inline-block;
+    background: var(--blue-light);
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+  h1 { font-size: 22px; font-weight: 600; margin-bottom: 8px; color: var(--blue); }
+  p.lead { font-size: 15px; color: var(--text-soft); margin-bottom: 18px; }
+  .notice {
+    background: var(--amber-light);
+    color: var(--amber);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+  }
+  button {
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    width: 100%;
+    transition: transform .08s, background .15s, opacity .15s;
+  }
+  button:active { transform: scale(0.985); }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { background: #c41824; }
+  .btn-ghost { background: transparent; color: var(--text-soft); font-size: 13px; padding: 10px; }
+  .btn-ghost:hover { color: var(--text); }
+  .row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .step-label { font-size: 13px; color: var(--text-soft); }
+  .freq-label { font-size: 22px; font-weight: 600; color: var(--blue); }
+  .track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 24px; }
+  .fill { height: 100%; background: var(--blue); border-radius: 3px; transition: width .3s; }
+  .pulse {
+    width: 96px; height: 96px; border-radius: 50%;
+    background: var(--blue-light);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 10px;
+    font-size: 40px;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.08); opacity: .8; } }
+  .center { text-align: center; margin: 24px 0; }
+  .ask { font-size: 16px; font-weight: 600; text-align: center; margin-bottom: 16px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .btn-yes { background: var(--blue-light); color: var(--red); }
+  .btn-yes:hover { background: #fbd5c4; }
+  .btn-no { background: #f2eae6; color: var(--text-soft); }
+  .btn-no:hover { background: #e9ded8; }
+  .res-icon {
+    width: 68px; height: 68px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px; font-size: 34px;
+  }
+  .res-title { font-size: 19px; font-weight: 600; text-align: center; margin-bottom: 6px; }
+  .res-body { font-size: 14px; color: var(--text-soft); text-align: center; margin-bottom: 18px; }
+  .res-stat {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+  }
+  .res-stat .k { font-size: 13px; color: var(--text-soft); margin-bottom: 2px; }
+  .res-stat .v { font-size: 24px; font-weight: 600; color: var(--blue); }
+  .disclaimer { font-size: 11px; color: var(--text-faint); text-align: center; margin-top: 18px; line-height: 1.5; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+
+    <!-- INTRO -->
+    <div id="intro">
+      <span class="badge">Hearing check · prototype</span>
+      <h1>Can you still hear the high notes?</h1>
+      <p class="lead">A quick check of how high your hearing reaches. Put on your headphones, keep your volume moderate, and tell us which tones you can hear.</p>
+      <div class="notice">🎧 Use headphones &nbsp;·&nbsp; 🔉 Start at a low volume</div>
+      <button class="btn-primary" id="startBtn">Start the test</button>
+    </div>
+
+    <!-- TEST -->
+    <div id="test" class="hidden">
+      <div class="row">
+        <span class="step-label">Tone <span id="stepNum">1</span> of <span id="stepTotal">6</span></span>
+        <span class="freq-label" id="freqLabel">2 kHz</span>
+      </div>
+      <div class="track"><div class="fill" id="fill" style="width:16%"></div></div>
+      <div class="center">
+        <div class="pulse">🔊</div>
+        <p class="step-label" id="playStatus">Playing tone…</p>
+      </div>
+      <p class="ask">Can you hear this tone?</p>
+      <div class="grid2">
+        <button class="btn-yes" data-hear="yes">✓ Yes, I hear it</button>
+        <button class="btn-no" data-hear="no">✗ No, nothing</button>
+      </div>
+      <button class="btn-ghost" id="replayBtn">↻ Replay tone</button>
+    </div>
+
+    <!-- RESULT -->
+    <div id="result" class="hidden">
+      <div class="res-icon" id="resIcon">✓</div>
+      <p class="res-title" id="resTitle">Your hearing looks healthy</p>
+      <p class="res-body" id="resBody"></p>
+      <div class="res-stat">
+        <div class="k">Highest frequency you detected</div>
+        <div class="v" id="resFreq">—</div>
+      </div>
+      <button class="btn-primary" id="ctaBtn">See which Alpine protection fits you</button>
+      <button class="btn-ghost" id="restartBtn">↻ Test again</button>
+      <p class="disclaimer">This is an awareness tool, not a medical test. Results depend on your headphones and surroundings. If you're concerned about your hearing, see an audiologist.</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  var freqs = [2000, 4000, 8000, 12000, 15000, 17000];
+  var labels = ["2 kHz","4 kHz","8 kHz","12 kHz","15 kHz","17 kHz"];
+  var idx = 0, highestHeard = null, ctx = null, osc = null, gain = null;
+
+  var intro = document.getElementById('intro');
+  var test = document.getElementById('test');
+  var result = document.getElementById('result');
+
+  function playTone(freq){
+    stopTone();
+    try {
+      ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+      if (ctx.state === 'suspended') { ctx.resume(); }
+      osc = ctx.createOscillator();
+      gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.05);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start();
+    } catch(e){
+      document.getElementById('playStatus').textContent = 'Audio niet ondersteund in deze browser';
+    }
+  }
+  function stopTone(){
+    try { if(osc){ gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.05); osc.stop(ctx.currentTime + 0.1); osc = null; } } catch(e){}
+  }
+
+  function showStep(){
+    document.getElementById('stepNum').textContent = idx+1;
+    document.getElementById('stepTotal').textContent = freqs.length;
+    document.getElementById('freqLabel').textContent = labels[idx];
+    document.getElementById('fill').style.width = ((idx+1)/freqs.length*100)+'%';
+    document.getElementById('playStatus').textContent = 'Playing tone…';
+    playTone(freqs[idx]);
+  }
+
+  function finish(){
+    stopTone();
+    test.classList.add('hidden');
+    result.classList.remove('hidden');
+    var hz = highestHeard;
+    document.getElementById('resFreq').textContent = hz ? (hz/1000)+' kHz' : 'Below 2 kHz';
+    var icon = document.getElementById('resIcon');
+    var title = document.getElementById('resTitle');
+    var body = document.getElementById('resBody');
+    if(hz && hz >= 15000){
+      icon.style.background = 'var(--blue-light)'; icon.style.color = 'var(--text)'; icon.textContent = '✓';
+      title.textContent = 'Your hearing looks healthy';
+      body.textContent = 'You can still hear very high frequencies — a good sign. Keep protecting your ears in loud places to keep it that way.';
+    } else if(hz && hz >= 8000){
+      icon.style.background = 'var(--blue-light)'; icon.style.color = 'var(--red)'; icon.textContent = '!';
+      title.textContent = 'Some high-frequency loss is possible';
+      body.textContent = 'You stopped hearing the highest tones. This is common with age and noise exposure. Protecting your ears now helps prevent further loss.';
+    } else {
+      icon.style.background = 'var(--red)'; icon.style.color = '#fff'; icon.textContent = '!';
+      title.textContent = 'Worth getting your hearing checked';
+      body.textContent = 'You only heard the lower tones in this quick check. A professional hearing test can tell you more — and protection matters most for you.';
+    }
+  }
+
+  document.getElementById('startBtn').addEventListener('click', function(){
+    intro.classList.add('hidden');
+    test.classList.remove('hidden');
+    idx = 0; highestHeard = null;
+    showStep();
+  });
+  document.querySelectorAll('[data-hear]').forEach(function(b){
+    b.addEventListener('click', function(){
+      if(this.getAttribute('data-hear') === 'yes'){ highestHeard = freqs[idx]; }
+      idx++;
+      if(idx >= freqs.length){ finish(); } else { showStep(); }
+    });
+  });
+  document.getElementById('replayBtn').addEventListener('click', function(){ playTone(freqs[idx]); });
+  document.getElementById('restartBtn').addEventListener('click', function(){
+    result.classList.add('hidden');
+    intro.classList.remove('hidden');
+  });
+  document.getElementById('ctaBtn').addEventListener('click', function(){
+    window.open('https://www.alpine.nl', '_blank');
+  });
+})();
+</script>
+</body>
+</html>
